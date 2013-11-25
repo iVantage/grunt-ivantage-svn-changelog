@@ -1,0 +1,29 @@
+{
+  "name": "grunt-ivantage-svn-changelog",
+  "version": "0.0.0",
+  "description": "Incrementally build out your changelog whenever you tag a version for release",
+  "main": "gruntfile.js",
+  "scripts": {
+    "test": "grunt test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/iVantage/grunt-ivantage-svn-changelog.git"
+  },
+  "keywords": [
+    "svn",
+    "changelog"
+  ],
+  "author": "jtrussell",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/iVantage/grunt-ivantage-svn-changelog/issues"
+  },
+  "dependencies": {
+    "grunt": "~0.4.2",
+    "grunt-contrib-jshint": "~0.7.2",
+    "svn-log-parse": "~0.1.1",
+    "shelljs": "~0.2.6",
+    "semver-tags": "~0.1.4"
+  }
+}

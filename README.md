@@ -59,7 +59,7 @@ strings:
 - 'TAG:**your-tag-here**'
 
 NOTE: Right now the `'LAST_SEMVER_TAG'` option requires a global install of
-[semver-tags](https://github.com/jtrussell/semver-tags);
+[semver-tags](https://github.com/jtrussell/semver-tags).
 
 #### changesetUrl
 Type: `String`

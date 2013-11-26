@@ -1,0 +1,11 @@
+# iVantage CHANGELOG r{{revFrom}}:r{{revTo}}
+
+{{#each messages}}
+## {{@key}}
+{{#each flags}}
+### {{@key}}
+  {{#each this}}
+- [{{revision}}]({{changeset}}) - {{summary}}
+  {{/each}}
+{{/each}}
+{{/each}}

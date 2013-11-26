@@ -10,7 +10,8 @@
 
 module.exports = function(grunt) {
 
-  var sh = require('shelljs');
+  var sh = require('shelljs')
+    , Handlebars = require('handlebars');
 
   var getHeadRev
     , getRevFromKey
@@ -25,32 +26,48 @@ module.exports = function(grunt) {
   var Parser = require('svn-log-parse').Parser
     , parser = new Parser();
 
-  grunt.registerMultiTask('ivantage_svn_changelog', '', function() {
+  var changelogTpl = Handlebars.compile(grunt.file.read(__dirname + '/../assets/changeset.md.handlebars'));
+
+  grunt.registerMultiTask('ivantage_svn_changelog', 'Build changelogs from your svn commit message history', function() {
 
     if(!sh.which('svn')) {
       grunt.fail.fatal('ivantage_svn_changelog requires the svn command line tools');
     }
 
+    // Note the final changelog will honor this order
+    var allFlags = [
+      'feature',
+      'fix',
+      'style',
+      'docs',
+      'chore',
+      'refactor',
+      'test',
+      'admin',
+      'partial'
+    ];
+
     var opts = this.options({
-      // Available flags
-      // - admin
-      // - chore
-      // - docs
-      // - feature
-      // - fix
-      // - ui
-      // - partial
-      // - refactor
-      // - style
-      // - test
+      // See the `allFlags` var
       flags: ['feature', 'fix'],
 
       revFrom: 'LAST_SEMVER_TAG',
-      revTo: 'HEAD'
+      revTo: 'HEAD',
+
+      // Should be a beanstalk(?) changeset url with a placeholder for the
+      // revision number
+      changesetUrl: '#{{revision}}',
+
+      outFile: 'CHANGELOG.md'
     });
 
     var revFrom = +getRevFromKey(opts.revFrom)
       , revTo = +getRevFromKey(opts.revTo);
+
+    // Makes sure we only get legal flags
+    opts.flags = opts.flags.filter(function(f) {
+      return -1 !== allFlags.indexOf(f);
+    });
 
     if(revFrom > 0) {
       var cmd = sh.exec('svn log -r ' + revFrom + ':' + revTo, {silent: true});
@@ -59,29 +76,72 @@ module.exports = function(grunt) {
 
         // The first line of every message should be of the form:
         // <type>:(<scope>): <summary>
-        var ix, firstLine, type, scope, summary;
+        var ix, firstLine, type, scope, summary, revision;
 
-        var messages = {};
+        var scopes = [], messages = {};
+
+        var initScopeFlags = function(scope) {
+          allFlags.forEach(function(f) {
+            messages[scope].flags[f] = [];
+          });
+        };
 
         for(ix = logs.length; ix--;) {
           firstLine = logs[ix].message.split(/\r\n?/)[0];
           type = getCommitHeaderType(firstLine);
           scope = getCommitHeaderScope(firstLine);
           summary = getCommitHeaderSummary(firstLine);
+          revision = logs[ix].revision.replace(/^r/, '');
 
-          if(!messages.hasOwnProperty(scope)) {
-            messages[scope] = {
-              label: scope,
-              flags: {}
-            };
+          if(-1 !== opts.flags.indexOf(type)) {
+            if(!messages.hasOwnProperty(scope)) {
+              messages[scope] = {
+                label: scope,
+                flags: {}
+              };
+
+              // Make sure these are added in sorted order
+              initScopeFlags(scope);
+            }
+
+            messages[scope].flags[type].push({
+              summary: summary,
+              revision: revision,
+              changeset: opts.changesetUrl.replace('{{revision}}', revision)
+            });
           }
 
-          if(!messages[scope].flags.hasOwnProperty(type)) {
-            messages[scope].flags[type] = [];
-          }
-
-          messages[scope].flags[type].push(summary);
         }
+
+        // We had to add all flags to keep their order - now go through and
+        // clear out the empty ones
+        Object.keys(messages).forEach(function(scope) {
+          var ix, f;
+          for(ix = allFlags.length; ix--;) {
+            f = allFlags[ix];
+            if(0 === messages[scope].flags[f].length) {
+              delete messages[scope].flags[f];
+            }
+          }
+        });
+
+        var messagesSorted = {};
+
+        // Sort our scopes so we get consistent output, there's no
+        // good/gaurenteed way to sort object keys so... just create a new
+        // object and assign it keys in alpha order
+        Object.keys(messages).forEach(function(scope) {
+          messagesSorted[scope] = messages[scope];
+        });
+
+        var changelogMd = changelogTpl({
+          messages: messagesSorted,
+          revFrom: revFrom,
+          revTo: revTo
+        });
+        grunt.file.write(opts.outFile, changelogMd);
+
+        grunt.log.ok('CHANGELOG written to: ' + opts.outFile);
 
         return;
       }
@@ -102,10 +162,10 @@ module.exports = function(grunt) {
       return getHeadRev();
     }
 
-    //if('LAST_SEMVER_TAG' === revKey) {
-    //  var lastSemverTag = getLastSemverTag();
-    //  return getRevFromTag(lastSemverTag);
-    //}
+    if('LAST_SEMVER_TAG' === revKey) {
+      var lastSemverTag = getLastSemverTag();
+      return getRevFromTag(lastSemverTag);
+    }
 
     // Could be 'TAG:<tag>'
     if(/TAG:.*/.test(revKey + '')) {
@@ -119,8 +179,18 @@ module.exports = function(grunt) {
   };
 
   getLastSemverTag = function() {
-    // Hmmm sever-tags is an async command... use shelljs ;)? Seems like a
-    // horrible hack... probably because it would be.
+    if(!sh.which('semver-tags')) {
+      grunt.fail.fatal('The LAST_SEMVER_TAG option requires semver-tags be installed globally... sorry');
+    }
+
+    var cmd = sh.exec('semver-tags --last --repo-type svn', {silent: true});
+    if(cmd.code === 0) {
+      var tag = cmd.output.trim();
+      if(tag.length) {
+        return tag;
+      }
+    }
+    grunt.fail.fatal('Ouch, could not get your last semver-tag, what happens when you run "semver-tags --last --repo-type svn"?');
   };
 
   getHeadRev = function() {

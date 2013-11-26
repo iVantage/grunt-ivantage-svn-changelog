@@ -59,7 +59,7 @@ strings:
 - 'TAG:**your-tag-here**'
 
 NOTE: Right now the `'LAST_SEMVER_TAG'` option requires a global install of
-[semver-tags](https://github.com/jtrussell/semver-tags);
+[semver-tags](https://github.com/jtrussell/semver-tags).
 
 NOTE: `'LAST_SEMVER_TAG'` assumes you have just tagged your repo - so it will
 skip over a tag. I.e. if you just tagged trunk as `v0.9.8` it would reach back

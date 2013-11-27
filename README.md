@@ -56,14 +56,15 @@ strings:
 
 - 'HEAD'
 - 'LAST_SEMVER_TAG'
+- 'LAST_SEMVER_TAG:**num-semver-tags-ago**'
 - 'TAG:**your-tag-here**'
+
+The `'LAST_SEMVER_TAG:N'` option is meant to support workflows where the
+changelog is built *after* tagging the current version for release. In this case
+you would use `'LAST_SEMVER_TAG:2'` to skip over the version you just tagged.
 
 NOTE: Right now the `'LAST_SEMVER_TAG'` option requires a global install of
 [semver-tags](https://github.com/jtrussell/semver-tags).
-
-NOTE: `'LAST_SEMVER_TAG'` assumes you have just tagged your repo - so it will
-skip over a tag. I.e. if you just tagged trunk as `v0.9.8` it would reach back
-to grab the tagged release just before it, presumably `v0.9.7`.
 
 #### changesetUrl
 Type: `String`

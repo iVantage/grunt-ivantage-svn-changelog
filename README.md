@@ -63,9 +63,6 @@ The `'LAST_SEMVER_TAG:N'` option is meant to support workflows where the
 changelog is built *after* tagging the current version for release. In this case
 you would use `'LAST_SEMVER_TAG:2'` to skip over the version you just tagged.
 
-NOTE: Right now the `'LAST_SEMVER_TAG'` option requires a global install of
-[semver-tags](https://github.com/jtrussell/semver-tags).
-
 #### changesetUrl
 Type: `String`
 Default: `'#{{revision}}'`

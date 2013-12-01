@@ -87,7 +87,7 @@ module.exports = function(grunt) {
         };
 
         for(ix = logs.length; ix--;) {
-          firstLine = logs[ix].message.split(/\r\n?/)[0];
+          firstLine = logs[ix].message.split(/\r?\n/)[0];
           type = getCommitHeaderType(firstLine);
           scope = getCommitHeaderScope(firstLine);
           summary = getCommitHeaderSummary(firstLine);

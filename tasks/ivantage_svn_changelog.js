@@ -210,7 +210,7 @@ module.exports = function(grunt) {
   };
 
   getRevFromSvnInfo = function(svnInfo) {
-    var lines = svnInfo.split(/\r\n?/g), l, ix;
+    var lines = svnInfo.split(/\r?\n/g), l, ix;
     for(ix = lines.length; ix--;) {
       l = lines[ix].split(':');
       if(l.length === 2) {

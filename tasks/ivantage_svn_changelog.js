@@ -181,18 +181,14 @@ module.exports = function(grunt) {
   };
 
   getLastSemverTag = function(numTagsAgo) {
-    if(!sh.which('semver-tags')) {
-      grunt.fail.fatal('The LAST_SEMVER_TAG option requires semver-tags be installed globally... sorry');
-    }
-
-    var cmd = sh.exec('semver-tags --last ' + numTagsAgo + ' --first --repo-type svn', {silent: true});
+    var cmd = sh.exec('node "'  + __dirname + '/../util/last-semver-tag.js" ' + numTagsAgo, {silent: true});
     if(cmd.code === 0) {
       var tag = cmd.output.trim();
       if(tag.length) {
         return tag;
       }
     }
-    grunt.fail.fatal('Ouch, could not get your last semver-tag, what happens when you run "semver-tags --last ' + numTagsAgo + ' --first --repo-type svn"?');
+    grunt.fail.fatal('Ouch, could not get your last semver tag');
   };
 
   getHeadRev = function() {

@@ -11,7 +11,8 @@
 module.exports = function(grunt) {
 
   var sh = require('shelljs')
-    , Handlebars = require('handlebars');
+    , Handlebars = require('handlebars')
+    , run;
 
   var getHeadRev
     , getRevFromKey
@@ -70,7 +71,7 @@ module.exports = function(grunt) {
     });
 
     if(revFrom > 0) {
-      var cmd = sh.exec('svn log -r ' + revFrom + ':' + revTo, {silent: true});
+      var cmd = run('svn log -r ' + revFrom + ':' + revTo, true);
       if(cmd.code === 0) {
         var logs = parser.parse(cmd.output);
 
@@ -143,6 +144,16 @@ module.exports = function(grunt) {
 
         grunt.log.ok('CHANGELOG written to: ' + opts.outFile);
 
+        var checkinStatusCode =
+          run('svn add "' + opts.outFile +'"').code +
+          run('svn ci "' + opts.outFile + '" -m "chore: Add changelog (' + revFrom + ' - ' + revTo + ')"').code;
+
+        if(checkinStatusCode === 0) {
+          grunt.log.ok('CHANGELOG checked in');
+        } else {
+          grunt.fail.warn('Could not check CHANGELOG into version control');
+        }
+
         return;
       }
     }
@@ -181,7 +192,7 @@ module.exports = function(grunt) {
   };
 
   getLastSemverTag = function(numTagsAgo) {
-    var cmd = sh.exec('node "'  + __dirname + '/../util/last-semver-tag.js" ' + numTagsAgo, {silent: true});
+    var cmd = run('node "'  + __dirname + '/../util/last-semver-tag.js" ' + numTagsAgo, true);
     if(cmd.code === 0) {
       var tag = cmd.output.trim();
       if(tag.length) {
@@ -192,7 +203,7 @@ module.exports = function(grunt) {
   };
 
   getHeadRev = function() {
-    var cmd = sh.exec('svn info -r HEAD', {silent: true});
+    var cmd = run('svn info -r HEAD', true);
     if(cmd.code === 0) {
       return getRevFromSvnInfo(cmd.output);
     } else {
@@ -201,7 +212,7 @@ module.exports = function(grunt) {
   };
 
   getRevFromTag = function(tag) {
-    var cmd = sh.exec('svn info "^/tags/' + tag + '"', {silent: true});
+    var cmd = run('svn info "^/tags/' + tag + '"', true);
     if(cmd.code === 0) {
       return getRevFromSvnInfo(cmd.output);
     } else {
@@ -246,6 +257,14 @@ module.exports = function(grunt) {
   getCommitHeaderSummary = function(header) {
     var parts = header.split(':');
     return parts.length === 2 ? parts[1].trim() : '';
+  };
+
+  run = function(cmd, force) {
+    if(grunt.option('dry-run')) {
+      console.log('Not running: ' + cmd);
+      return;
+    }
+    return sh.exec(cmd, {silent: true});
   };
 
 };

@@ -260,9 +260,10 @@ module.exports = function(grunt) {
   };
 
   run = function(cmd, force) {
-    if(grunt.option('dry-run')) {
+    force = force || false;
+    if(grunt.option('dry-run') && !force) {
       console.log('Not running: ' + cmd);
-      return;
+      return {code: 0, output: ''};
     }
     return sh.exec(cmd, {silent: true});
   };

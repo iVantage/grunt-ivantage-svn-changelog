@@ -25,6 +25,7 @@
     "svn-log-parse": "~0.1.1",
     "shelljs": "~0.2.6",
     "semver-tags": "~0.4.1",
-    "handlebars": "~1.1.2"
+    "handlebars": "~1.1.2",
+    "svn-project-root": "^0.1.0"
   }
 }

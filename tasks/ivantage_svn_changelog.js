@@ -12,6 +12,7 @@ module.exports = function(grunt) {
 
   var sh = require('shelljs')
     , Handlebars = require('handlebars')
+    , getRoot = require('svn-project-root').sync
     , run;
 
   var getHeadRev
@@ -212,7 +213,8 @@ module.exports = function(grunt) {
   };
 
   getRevFromTag = function(tag) {
-    var cmd = run('svn info "^/tags/' + tag + '"', true);
+    var root = getRoot()
+      , cmd = run('svn info "' + root + '/tags/' + tag + '"', true);
     if(cmd.code === 0) {
       return getRevFromSvnInfo(cmd.output);
     } else {

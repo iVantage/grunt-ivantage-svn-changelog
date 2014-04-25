@@ -20,10 +20,20 @@ module.exports = function(grunt) {
       options: {
         jshintrc: '.jshintrc',
       },
+    },
+
+    bump: {
+      options: {
+        commitMessage: 'chore: Bump for release (v%VERSION%)',
+        files: ['package.json'],
+        commitFiles: ['-a'],
+        push: false
+      }
     }
   });
 
   grunt.loadNpmTasks('grunt-contrib-jshint');
+  grunt.loadNpmTasks('grunt-bump');
 
   grunt.registerTask('default', ['jshint']);
 };

@@ -145,7 +145,11 @@ module.exports = function(grunt) {
 
         grunt.log.ok('CHANGELOG written to: ' + opts.outFile);
 
+        // This may generate a warning if the changelog file is already under
+        // version control but that's ok, we may be just updating an existing
+        // changelog rather than creating a fresh one.
         run('svn add "' + opts.outFile +'"');
+
         var checkinStatusCode =
           run('svn ci "' + opts.outFile + '" -m "chore: Add changelog (' + revFrom + ' - ' + revTo + ')"').code;
 

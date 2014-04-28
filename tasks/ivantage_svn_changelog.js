@@ -145,8 +145,8 @@ module.exports = function(grunt) {
 
         grunt.log.ok('CHANGELOG written to: ' + opts.outFile);
 
+        run('svn add "' + opts.outFile +'"');
         var checkinStatusCode =
-          run('svn add "' + opts.outFile +'"').code +
           run('svn ci "' + opts.outFile + '" -m "chore: Add changelog (' + revFrom + ' - ' + revTo + ')"').code;
 
         if(checkinStatusCode === 0) {

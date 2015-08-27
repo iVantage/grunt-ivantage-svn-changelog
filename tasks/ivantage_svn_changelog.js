@@ -60,7 +60,7 @@ module.exports = function(grunt) {
       // revision number
       changesetUrl: '#{{revision}}',
 
-      outFile: 'CHANGELOG.md'
+      outFile: 'changelogs/CHANGELOG-{{version}}.md'
     });
 
     var revFrom = +getRevFromKey(opts.revFrom)

@@ -61,8 +61,16 @@ module.exports = function(grunt) {
       changesetUrl: '#{{revision}}',
 
       outFile: 'changelogs/CHANGELOG-{{version}}.md'
+      
+      
     });
-
+  
+    var pkginfo = require('pkginfo')(module, 'version');
+  
+	console.dir(pkginfo);
+	
+	opts.outFile = opts.outFile.replace('{{version}}', pkginfo.version)
+	
     var revFrom = +getRevFromKey(opts.revFrom)
       , revTo = +getRevFromKey(opts.revTo);
 

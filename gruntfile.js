@@ -29,7 +29,7 @@ module.exports = function(grunt) {
         commitFiles: ['-a'],
         push: false
       }
-    },
+    }
     
    //  var findup = require('findup-sync');
 // 
@@ -39,9 +39,7 @@ module.exports = function(grunt) {
 // 	// Start looking somewhere else, and ignore case (probably a good idea).
 // 	var filepath2 = findup('package.json', {cwd: '/grunt-ivantage-svn-changelog/package.json', nocase: true});
 
-	var pkginfo = require('pkginfo')(module, 'version');
-  
-	console.dir(module.exports);
+	
     
   });
 

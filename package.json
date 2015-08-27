@@ -22,10 +22,11 @@
   "dependencies": {
     "grunt": "~0.4.2",
     "grunt-contrib-jshint": "~0.7.2",
-    "svn-log-parse": "~0.1.1",
-    "shelljs": "~0.2.6",
-    "semver-tags": "~0.4.1",
     "handlebars": "~1.1.2",
+    "pkginfo": "^0.3.0",
+    "semver-tags": "~0.4.1",
+    "shelljs": "~0.2.6",
+    "svn-log-parse": "~0.1.1",
     "svn-project-root": "^0.1.0"
   },
   "devDependencies": {

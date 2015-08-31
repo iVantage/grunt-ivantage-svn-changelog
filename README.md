@@ -72,9 +72,10 @@ revision number.
 
 #### outFile
 Type: `String`
-Default: `'CHANGELOG.md'`
+Default: `'changelogs/CHANGELOG-{{version}}.md'`
 
-Where to write your changelog to.
+Where to write your changelog to. You may use `'{{version}}'` as a placeholder
+for your project's current version as listed in your `'package.json'` file.
 
 ## Contributing
 In lieu of a formal styleguide, take care to maintain the existing coding style.

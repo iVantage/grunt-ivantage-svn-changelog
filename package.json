@@ -20,10 +20,10 @@
     "url": "https://github.com/iVantage/grunt-ivantage-svn-changelog/issues"
   },
   "dependencies": {
+    "findup-sync": "^0.2.1",
     "grunt": "~0.4.2",
     "grunt-contrib-jshint": "~0.7.2",
     "handlebars": "~1.1.2",
-    "pkginfo": "^0.3.0",
     "semver-tags": "~0.4.1",
     "shelljs": "~0.2.6",
     "svn-log-parse": "~0.1.1",

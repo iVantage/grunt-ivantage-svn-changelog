@@ -64,8 +64,10 @@ module.exports = function(grunt) {
     });
   
     if(opts.outFile.indexOf('{{version}}') > -1) {
-      var pkginfo = require('pkginfo')(module, 'version');
-      opts.outFile = opts.outFile.replace('{{version}}', pkginfo.version);
+      var findup = require('findup-sync')
+        , pkgPath = findup('package.json')
+        , pkgJson = grunt.file.readJSON(pkgPath);
+      opts.outFile = opts.outFile.replace('{{version}}', pkgJson.version);
     }
     
     var revFrom = +getRevFromKey(opts.revFrom)
